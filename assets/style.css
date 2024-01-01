@@ -256,3 +256,142 @@ form {
 	margin: 0 auto;
 	color: black;
   }
+  span, #boutonModal {
+	color: black;
+	font-size: small;
+	text-decoration: none;
+	align-self:center;
+  }
+ h2 {
+	display: flex;
+	justify-content: center;	
+  }
+  a {
+	display: flex;
+	flex-direction: row;
+	text-decoration: none;
+		
+  }
+  #projets svg {
+	align-self: center;
+
+  }
+ 
+  /* #modifierDiv {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	line-height: 2.2;
+		
+  }
+
+
+ #projets svg {
+	align-self: center;
+
+  }
+ h2 {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+		
+  } */
+
+  /* Style de la modal */
+  .modal {
+	position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .modalAjoutImg {
+	position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .modal-wrapper {
+    overflow: auto;
+    width: 70%; /* Ajustez la largeur de la modal selon vos besoins */
+    max-width: 600px; /* Ajoutez une largeur maximale si nécessaire */
+    max-height: 80%; /* Ajoutez une hauteur maximale si nécessaire */
+    padding: 20px;
+    background-color: #FFF;
+    text-align: center;
+    margin: auto;
+	margin-top: 20px;
+
+  }
+
+  h3 {
+	text-align: center;
+  }
+ 
+	#ligne {
+		width: 100%;
+		height: 2px;
+		margin:5px;
+		background-color: #B3B3B3;
+		margin-bottom: 10px;
+	  }
+
+  
+  #boutonAjoutPhoto {
+	text-align: center;
+	background-color: #073509;
+	color: white;
+	padding: 5px 25px 5px 25px;
+	margin: 10px;
+
+  }
+  #fermerModal {
+	margin-left: 95%;
+  }
+
+  .galleryModal {
+    display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 15px;
+    justify-content: center;
+}
+
+.gallery-item {
+   box-sizing: border-box;
+}
+.gallery-item img {
+    width: 100%;
+    height: auto;
+}
+
+.cadreImage {
+	text-align: center;
+	padding: 20px;
+	background-color: #ccdbe4;
+	margin-bottom: 15px;
+}
+
+.cadreImage img {
+	display: block;
+	margin: 0 auto;
+	width: 30%;
+	margin-bottom: 10px;
+}
+
+#icone {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+

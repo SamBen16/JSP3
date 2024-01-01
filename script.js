@@ -1,141 +1,244 @@
-import { seConnecter } from "./login.js";
+var modalAjout = document.getElementById('modalAjout');
+var ajoutPhoto = document.getElementById('ajoutPhoto');
+var imageInput = document.getElementById('imageInput');
+var inputTitle = document.getElementById('inputTitle');
+var inputCategory = document.getElementById('inputCategory');
+var galleryArray = [];
+
+const flecheRetourEnArriere = document.getElementById('flecheRetourEnArriere');
+flecheRetourEnArriere.addEventListener('click', function() {
+  window.location.href= 'index.html';
+});
+var ajouterUneFigure = document.getElementById('ajouterUneFigure');
+ajouterUneFigure.addEventListener('click', function() {
+  // event.preventDefault();
+
+  // var formData = new FormData(event.target);
+
+  var imageInput = document.getElementById('imageInput').value;
+  var inputTitle = document.getElementById('inputTitle').value;
+  var inputCategory = document.getElementById('inputCategory').value;
+
+  console.log(inputTitle, imageInput, inputCategory);
+
+  galleryArray.push({
+    imageUrl: URL.createObjectURL(imageInput),
+    title: inputTitle,
+    category: inputCategory
+  });
+
+  document.getElementById('ajouterUneFigure').reset();
+});
+
+function telechargerImage() {
+  var inputElement = document.getElementById('imageInput');
+  var imagePreview = document.getElementById('imagePreview');
+
+  // Vérifier si un fichier a été sélectionné
+  if (inputElement.files.length > 0) {
+      var imageFile = inputElement.files[0];
+
+      // Mise à jour de la source de l'image avec l'objet File
+      imagePreview.src = URL.createObjectURL(imageFile);
+
+      galleryArray.push({
+      imageUrl: imagePreview.src
+    });
+  }
+
+}
+
+var imageInput = document.getElementById('imageInput');
+var ajoutPhoto = document.getElementById('ajoutPhoto');
+
+ajoutPhoto.addEventListener('click', function() {
+  // Déclenchez le clic sur le sélecteur de fichier
+  imageInput.click();
+});
+
+// Ajoutez un écouteur d'événements pour réagir lorsque l'utilisateur sélectionne une image
+imageInput.addEventListener('change', function() {
+  telechargerImage();
+});
+
 
 fetch('http://localhost:5678/api/works')
+
   .then(response => response.json())
   .then(data => {
-  const gallery = document.querySelector('.gallery');
-  seConnecter()
-  //ajout array
-  const galleryArray = [];
+    const gallery = document.querySelector('.gallery');
+   // const galleryModal = document.querySelector('.galleryModal');
+ 
+    console.log(data);
 
-  const categoriesList = []
-  // const categoriesList = new Set();
+    // Ajout array
+    const galleryArray = [];
+    const categoriesList = new Set();
 
-  // création figure avec une boucle forEach
-  data.forEach(element => {
-  const figure = document.createElement('figure');
-  const img = document.createElement('img');
-  const figcaption = document.createElement('figcaption');
-  // const categoryElement = document.createElement('category')
-  img.src = element.imageUrl;
-  img.alt = element.title;
+    // Création figure 
+    data.forEach(element => {
+      const figure = document.createElement('figure');
+      const img = document.createElement('img');
+      const figcaption = document.createElement('figcaption');
+      //const imgModal = document.createElement('imgModal');
+      //imgModal.src = element.title;
+      img.src = element.imageUrl;
+      img.alt = element.title;
+      figcaption.innerText = element.title;
 
-  
+      const category = element.category.name;
+      console.log(categoriesList.add(category));
 
-  // figure.setAttribute("id", )
-  // categoryElement.innerText = element.category.name
-  //categoryElement.style.display = "none"
-  // categoriesList.add(element.category.name);
-  // console.log(figure)
-  galleryArray.push({
-    figure: figure,
-    category: element.category.name
-  }); 
-  figure.setAttribute("id", element.category.name);
+      galleryArray.push({
+        figure: figure,
+        category: category,
+        title: element.title,  // Ajoutez le titre
+        imageUrl: element.imageUrl 
+      });
 
-		gallery.appendChild(figure);
-		figure.appendChild(img);
-		figure.appendChild(figcaption);
-    // figure.appendChild(categoryElement);
-  });
-  // console.log(categoriesList)
+      figure.setAttribute("id", category);
+      //console.log(category);
 
-    const buttons = document.querySelector(".buttons")
+      gallery.appendChild(figure);
+      figure.appendChild(img);
+      figure.appendChild(figcaption);
+      // galleryModal.appendChild(imgModal);
+      
+    });
 
+   
+    const buttons = document.querySelector(".buttons");
 
-    const buttonTous = document.createElement("button")
-
-    //BOUTON TOUS //
+    // BOUTON TOUS //
+    const buttonTous = document.createElement("button");
     buttonTous.setAttribute("type", "button");
-    buttonTous.setAttribute("id", "tous")
-    console.log(buttonTous);
+    buttonTous.setAttribute("id", "tous");
     buttonTous.innerText = "Tous";
     buttons.appendChild(buttonTous);
-    buttonTous.addEventListener('click', function() {
-      //Affiche tous les éléments
+    buttonTous.addEventListener('click', function () {
+      // Affiche tous les éléments
       galleryArray.forEach(item => {
         item.figure.style.display = "block";
       });
     });
-     
+
     // LES AUTRES BOUTONS AVEC UNE BOUCLE//
-    for (let i = 0; i < 3; i++) {
-      
+    categoriesList.forEach(category => {
       const button = document.createElement("button");
       buttons.appendChild(button);
       button.setAttribute("type", "button");
-      button.setAttribute("id", galleryArray[i].figure.id)
-      const buttonID = button.innerText = galleryArray[i].figure.getAttribute("id");
-      // const categoryElement = element.category.name;
-      button.addEventListener('click', function() {
-       galleryArray.filter(function(categoryElement) {
-         console.log(categoryElement.category === buttonID);
-            if (categoryElement.category !== buttonID) {
-              categoryElement.figure.style.display = "none";
-             }
-        })
+      button.setAttribute("id", category);
+      button.innerText = category;
+
+      button.addEventListener('click', function () {
+        galleryArray.forEach(item => {
+          item.figure.style.display = item.category === category ? "block" : "none";
         });
-      console.log(button)
+      });
+    });
 
+    const logoutLien = document.querySelector("#logoutId");
+    logoutLien.addEventListener("click", function () {
+      localStorage.clear();
+    });
 
-    }
+    // concernant la connexion
+    // Récupère info de connexion depuis le localStorage
+    const isConnected = localStorage.getItem('connection');
+    console.log(isConnected);
+    //const gallery = document.querySelector('.gallery');
+    if (isConnected == 'true') {
+      document.querySelector("#loginId").style.display = "none";
+      document.querySelector("#logoutId").style.display = "block";
+        document.querySelector("#boutonModal").style.display = "block";
+        document.querySelector("#modifierDiv").style.display = "block";
+        console.log(gallery);
+        
 
-        //BOUTON OBJET //
-
-    // const buttonObjet  = document.createElement("button")
-    // buttonObjet.setAttribute("type", "button");
-    // buttonObjet.setAttribute("id", "objet")
-    // buttonObjet.innerText = "Objets";
-    // buttons.appendChild(buttonObjet);
-    // console.log(buttonObjet)
-    // buttonObjet.addEventListener('click', function() {
-    //   galleryArray.filter(function(categoryElement) {
-    //     console.log(categoryElement.category === "Objets");
-    //        if (categoryElement.category !== "Objets") {
-    //          categoryElement.figure.style.display = "none";
-    //        }
-    //    })
-      
-    // });
-
-
-    // const buttonAppartement  = document.createElement("button")
-    // buttonAppartement.setAttribute("type", "button");
-    // buttonAppartement.setAttribute("id", "appartement")
-    // buttonAppartement.innerText = "Appartements";
-    // buttons.appendChild(buttonAppartement);
-    // buttonAppartement.addEventListener('click', function() {
-    //   const filteredAppartements = galleryArray.filter(item => item.category.toLowerCase() === "appartements");
-    //   galleryArray.forEach(item => {
-    //     item.figure.style.display = filteredAppartements.includes(item) ? "block" : "none";
-    //   });
-    // });
+    } else {
+      document.querySelector("#loginId").style.display = "block";
+      document.querySelector("#logoutId").style.display = "none";
+    };
 
     
-    // const buttonHotel = document.createElement("button")
-    // buttonHotel.setAttribute("type", "button");
-    // buttonHotel.setAttribute("id", "hotel")
-    // buttonHotel.innerText = "Hôtels & restaurants";
-    // buttons.appendChild(buttonHotel);
-    //COMMENTAIRE
+    // MODAL AFFICHAGE LISTE PHOTO AVEC CORBEILLE ET SUPPRESSION DE LA PHOTO
+      const boutonModal = document.getElementById("boutonModal");
+      const modal = document.getElementById("modal1");
+      const fermerModal = document.getElementById("fermerModal");
+      
+      boutonModal.addEventListener("click", function() {
+        console.log("reussi");
+        const galleryModal = document.querySelector(".galleryModal");
 
-    //   for (let categoryElement of categoriesList) {
-    //     console.log(categoryElement);
-    // } });
+        data.forEach(element => {
+         
+          const figureModal = document.createElement('figure');
+          const imgModal = document.createElement('img');
+          const deleteImg = document.createElement('i');
 
-    // buttonHotel.addEventListener('click', function() {
-    //   galleryArray.filter(function(categoryElement) {
-    //    console.log(categoryElement.category === "Hotels & restaurants");
-    //       if (categoryElement.category !== "Hotels & restaurants") {
-    //         categoryElement.figure.style.display = "none";
-    //       }
-    //       console.log(categoryElement.category === "Hotels & restaurants");
-  
-    //   }
-    // )})
+          imgModal.src = element.imageUrl;
 
-    })
-
-  		.catch(error => console.error(error));
+          imgModal.alt = element.title;
+          
+          
+          figureModal.classList.add('gallery-item');
+          deleteImg.classList.add('fas', 'fa-trash-alt');
+          figureModal.style.position = 'relative';
+          deleteImg.style.position = 'absolute';
+          deleteImg.style.top = '6px';
+          deleteImg.style.right = '6px';
+          deleteImg.style.zIndex = '1';
+          deleteImg.style.opacity = '1';
+          deleteImg.style.border = '2px solid black';
+          deleteImg.style.backgroundColor = "black";
+          deleteImg.style.color = "white";
 
      
+
+          figureModal.appendChild(deleteImg);
+          figureModal.appendChild(imgModal);
+          galleryModal.appendChild(figureModal);
+
+          deleteImg.addEventListener('click', function() {
+            figureModal.remove();
+            console.log("supprimé");
+          });             
+        });
+
+        modal.style.display = "block";
+
+        const boutonAjoutPhoto = document.getElementById('boutonAjoutPhoto');
+        boutonAjoutPhoto.addEventListener('click', function() {
+          const modalAjout = document.getElementById('modalAjout');
+         // const galleryModal = document.querySelector('.galleryModal');
+          // modal.style.display  = "none";
+         galleryModal.innerHTML = "";
+          modalAjout.style.display = "block";
+          console.log("ajouter");
+          
+        });
+      });
+
+      // fermeture modal avec la croix
+      fermerModal.addEventListener("click", function() {
+        const modalAjout = document.getElementById('modalAjout');
+        console.log("fermer");
+        modal.style.display = "none";
+      });
+
+      // fermeture modal Ajout avec la croix
+      fermerModalAjout.addEventListener("click", function() {
+        modalAjout.style.display = "none";
+      });
+      
+      // var ajouterUneFigure = document.getElementById('ajouterUneFigure');
+      // ajouterUneFigure.addEventListener('click', function() {
+      //   console.log('ajoutunephoto');
+      //   galleryArray.push()
+      // });
+
+
+      
+  })
+
+  .catch(error => console.error(error));
